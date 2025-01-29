@@ -38,6 +38,15 @@ defmodule Werdle.Game do
     end
   end
 
+  def remove_last_character(changeset, guess_row) do
+    guess_field = guess_field(guess_row)
+    current_guess = Changeset.get_change(changeset, guess_field, [])
+    updated_guess = List.delete_at(current_guess, -1)
+    changeset.changes
+    |> Map.merge(%{guess_field => updated_guess})
+    |> change_guesses()
+  end
+
   defp guess_field(row) do
     String.to_existing_atom("guess_#{row}")
   end
