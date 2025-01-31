@@ -17,3 +17,14 @@
     80% { transform: translateX(-5px); }
     100% { transform: translateX(0); }
 }
+
+.flip-cell {
+    animation: shrink-vertical 0.5s 1;
+}
+
+@keyframes shrink-vertical {
+    0% { transform: scaleY(1); }
+    50% { transform: scaleY(0); }
+    100% { transform: scaleY(1); }
+}
+  

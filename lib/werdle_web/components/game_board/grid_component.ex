@@ -15,10 +15,9 @@ defmodule WerdleWeb.GameBoard.GridComponent do
           },
           map()
         ) :: {:ok, map()}
-  def update(%{id: id, cell_backgrounds: cell_backgrounds, changeset: changeset}, socket) do
+  def update(%{id: id, changeset: changeset}, socket) do
     socket = socket
     |> assign(:id, id)
-    |> assign(:cell_backgrounds, cell_backgrounds)
     |> assign(:changeset, changeset)
 
     {:ok, socket}
@@ -36,7 +35,6 @@ defmodule WerdleWeb.GameBoard.GridComponent do
             <.live_component
               module={WerdleWeb.GameBoard.RowComponent}
               id={"input-row-#{row_index}"}
-              cell_backgrounds={@cell_backgrounds}
               row_index={row_index}
               changeset={@changeset} />
           <% end %>

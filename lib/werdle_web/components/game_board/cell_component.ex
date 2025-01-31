@@ -8,14 +8,19 @@ defmodule WerdleWeb.GameBoard.CellComponent do
   alias Werdle.Game
 
   @impl true
-  def update(%{id: id, cell_backgrounds: cell_backgrounds, changeset: changeset}, socket) do
+  def update(%{id: id, changeset: changeset}, socket) do
     socket = socket
     |> assign(:id, id)
-    |> assign(:cell_backgrounds, cell_backgrounds)
     |> assign(:changeset, changeset)
-    |> assign(:background, "bg-transparent")
+    |> assign(:background, socket.assigns[:background] || "bg-transparent")
 
     {:ok, socket}
+  end
+
+  @impl true
+  def handle_event("cell_background_update", %{"background" => background}, socket) do
+    socket = assign(socket, :background, "#{background} flip-cell")
+    {:noreply, socket}
   end
 
   @impl true
