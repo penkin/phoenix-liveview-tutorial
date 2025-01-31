@@ -15,6 +15,11 @@ defmodule WerdleWeb.WordLive.Index do
   end
 
   @impl true
+  def handle_info(:new_game, socket) do
+    {:noreply, push_navigate(socket, to: "/")}
+  end
+
+  @impl true
   def handle_event("backspace", _params, socket) do
     changeset = socket.assigns.changeset
     guess_row = socket.assigns.current_guess
@@ -31,7 +36,8 @@ defmodule WerdleWeb.WordLive.Index do
     solve = socket.assigns.solve
 
     with {:ok, _changeset} <- Game.validate_guess(changeset, guess_row),
-      {:correct, _changeset} <- Game.check_guess_correctness(changeset, guess_row, solve.name) do
+         {:correct, _changeset} <- Game.check_guess_correctness(changeset, guess_row, solve.name) do
+      Process.send_after(self(), :new_game, 5000)
       {:noreply, handle_correct_guess(socket)}
 
     else
@@ -39,6 +45,7 @@ defmodule WerdleWeb.WordLive.Index do
         {:noreply, handle_invalid_guess(socket, error_message)}
 
       {:incorrect, _changeset} when guess_row == 5 ->
+        Process.send_after(self(), :new_game, 5000)
         {:noreply, handle_game_over(socket)}
 
       {:incorrect, _changeset} ->
