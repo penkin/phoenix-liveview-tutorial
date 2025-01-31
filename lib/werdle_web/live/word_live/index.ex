@@ -8,7 +8,6 @@ defmodule WerdleWeb.WordLive.Index do
     socket =
       socket
       |> assign(:solve, WordBank.random_solve())
-      |> assign(:keyboard_backgrounds, %{})
       |> assign(:changeset, Game.change_guesses())
       |> assign(:current_guess, 0)
 
@@ -85,16 +84,17 @@ defmodule WerdleWeb.WordLive.Index do
 
   defp create_guess_response(socket, message) do
     guess_row = socket.assigns.current_guess
-    comparison_result =
+    comparison_results =
       Game.compare_guess(socket.assigns.changeset, guess_row, socket.assigns.solve.name)
     letter_statuses =
-      Enum.map(comparison_result, fn {_letter, letter_status} -> letter_status end)
+      Enum.map(comparison_results, fn {_letter, letter_status} -> letter_status end)
 
     socket
     |> maybe_push_event("guess-validation-text", message)
     |> push_event("guess-reveal-animation", %{
       guess_row: guess_row,
-      letter_statuses: letter_statuses
+      letter_statuses: letter_statuses,
+      comparison_results: Map.new(comparison_results)
     })
   end
 
