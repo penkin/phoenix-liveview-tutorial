@@ -62,22 +62,25 @@ defmodule WerdleWeb.WordLive.Index do
 
   defp handle_correct_guess(socket, solve) do
     socket
-    |> put_flash(:correct, "#{String.upcase(solve.name)} is correct!")
+    |> push_event("guess-validation-text", %{message: "#{String.upcase(solve.name)} is correct!"})
   end
 
   defp handle_invalid_guess(socket, error_message) do
     socket
-    |> put_flash(:error, error_message)
+    |> push_event("shake-row", %{id: socket.assigns.current_guess})
+    |> push_event("guess-validation-text", %{message: error_message})
   end
 
   defp handle_game_over(socket, solve) do
     socket
-    |> put_flash(:game_over, "#{String.upcase(solve.name)} was the correct answer.")
+    |> push_event("shake-row", %{id: socket.assigns.current_guess})
+    |> push_event("guess-validation-text", %{message: "#{String.upcase(solve.name)} was the correct answer."})
   end
 
   defp handle_incorrect_guess(socket, guess_row) do
     socket
     |> assign(:current_guess, guess_row + 1)
-    |> put_flash(:incorrect, "Try again.")
+    |> push_event("shake-row", %{id: socket.assigns.current_guess})
+    |> push_event("guess-validation-text", %{message: "Try again."})
   end
 end
